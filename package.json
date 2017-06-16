@@ -1,10 +1,10 @@
 {
   "name": "compose-to-batch",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A CLI tool to transform a docker-compose.yml into an AWS Batch job definition",
   "main": "index.js",
   "bin": {
-    "composeToBatch": "index.js"
+    "compose-to-batch": "index.js"
   },
   "scripts": {
     "start": "node .",
