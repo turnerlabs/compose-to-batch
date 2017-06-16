@@ -1,0 +1,43 @@
+{
+  "name": "compose-to-batch",
+  "version": "0.1.0",
+  "description": "A CLI tool to transform a docker-compose.yml into an AWS Batch job definition",
+  "main": "index.js",
+  "bin": {
+    "composeToBatch": "index.js"
+  },
+  "scripts": {
+    "start": "node .",
+    "fmt": "prettier --single-quote --no-semi --write index.js && prettier --single-quote --no-semi --write test/index.js",
+    "test": "mocha",
+    "watch": "watch 'npm run fmt && npm test' ."
+  },
+  "engines": {
+    "node": ">=6.11.0"
+  },
+  "author": "John Ritsema <john.ritsema@turner.com>",
+  "license": "Apache-2",
+  "keywords": [
+    "docker-compose",
+    "docker-compose.yml",
+    "aws",
+    "batch",
+    "job",
+    "job-definition.json"
+  ],
+  "devDependencies": {
+    "mocha": "^3.4.2",
+    "watch": "^1.0.2"
+  },
+  "dependencies": {
+    "js-yaml": "^3.8.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/turnerlabs/compose-to-batch.git"
+  },
+  "homepage": "https://github.com/turnerlabs/compose-to-batch#readme",
+  "bugs": {
+    "url": "https://github.com/turnerlabs/compose-to-batch/issues"
+  }  
+}
