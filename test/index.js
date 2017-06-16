@@ -3,8 +3,8 @@ const yaml = require('js-yaml')
 const transform = require('../.')
 
 const service = 'my-job'
-const vcpus = '4'
-const memory = '8000'
+const vcpus = 4
+const memory = 8000
 const jobRoleArn = 'foo'
 const envVarName = 'NAME1'
 const envVarValue = 'VALUE1'
@@ -61,14 +61,16 @@ describe('composeToBatch', () => {
       )
     })
 
-    it('should map the vcpus', () => {
+    it('should map the vcpus as a number', () => {
       jobDefinition = transform(compose)
       assert.equal(jobDefinition.containerProperties.vcpus, vcpus)
+      assert.equal(typeof jobDefinition.containerProperties.vcpus, typeof vcpus)
     })
 
-    it('should map the memory', () => {
+    it('should map the memory as a number', () => {
       jobDefinition = transform(compose)
       assert.equal(jobDefinition.containerProperties.memory, memory)
+      assert.equal(typeof jobDefinition.containerProperties.vcpus, typeof vcpus)
     })
 
     it('should map the jobRoleArn', () => {

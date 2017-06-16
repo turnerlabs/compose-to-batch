@@ -39,8 +39,8 @@ function transform(compose) {
   result.containerProperties = {
     image: service.image,
     environment: [],
-    vcpus: '2',
-    memory: '2000'
+    vcpus: 2,
+    memory: 2000
   }
 
   //environment variables
@@ -62,10 +62,10 @@ function transform(compose) {
   if (service.labels) {
     Object.keys(service.labels).forEach(label => {
       if (label === 'composeToBatch.vcpus')
-        result.containerProperties.vcpus = service.labels[label]
+        result.containerProperties.vcpus = parseInt(service.labels[label])
 
       if (label === 'composeToBatch.memory')
-        result.containerProperties.memory = service.labels[label]
+        result.containerProperties.memory = parseInt(service.labels[label])
 
       if (label === 'composeToBatch.jobRoleArn')
         result.containerProperties.jobRoleArn = service.labels[label]
