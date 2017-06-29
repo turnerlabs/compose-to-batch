@@ -33,15 +33,15 @@ services:
     environment:
       REGION: us-east-1
     labels:      
-      composeToBatch.vcpus: 2
-      composeToBatch.memory: 2000
+      composeToBatch.vcpus: "2"
+      composeToBatch.memory: "2000"
       composeToBatch.jobRoleArn: arn:aws:iam::12345678910:role/my-role
 ```
 
 running the following command
 
 ```bash
-cat docker-compose.yml | compose-to-batch
+docker-compose config | compose-to-batch
 ```
 
 will output the following
@@ -73,4 +73,4 @@ will output the following
 - service.environment -> containerProperties.environment
 - service.labels.composeToBatch.vcpus -> containerProperties.vcpus
 - service.labels.composeToBatch.memory -> containerProperties.memory
-- service.labels.composeToBatch.jobRoleArn -> containerProperties.jobRoleArn
+- service.labels.composeToBatch.jobRoleArn -> containerProperties.jobRoleArn [Optional]
