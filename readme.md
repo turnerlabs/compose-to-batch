@@ -72,9 +72,7 @@ will output the following
 
 ### local development using IAM keys and Batch with jobRoleArn
 
-A common scenario is to do local development using IAM keys specified as environment variables in your container.  When you're ready to deploy to Batch, you typically don't want to expose your secret IAM keys.  
-
-One way to accomplish this is to use docker compose's variable substitution feature by including your iam keys in a `.env` file and then reference those variables in your docker-compose.yml file.
+A common scenario is to do local development using IAM keys specified as environment variables in your container.  You typically don't want to check in your secrets to source control so a `.env` file is a good option here.  When you're ready to deploy to Batch, you also typically don't want to expose your secret IAM keys.  With this in mind,  `compose-to-batch` will exclude any environment variables that reference dynamic variables.  For example:
 
 ```
 AWS_ACCESS_KEY_ID=xyz
