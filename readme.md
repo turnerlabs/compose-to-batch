@@ -14,7 +14,6 @@ $ docker-compose config | compose-to-batch > job-definition.json
 $ aws batch register-job-definition --cli-input-json file://job-definition.json
 ```
 
-
 ### usage
 
 install
@@ -32,16 +31,12 @@ services:
     image: 12345678910.dkr.ecr.us-east-1.amazonaws.com/my-job:0.1.0
     environment:
       REGION: us-east-1
-    labels:      
-      composeToBatch.vcpus: 2
-      composeToBatch.memory: 2000
-      composeToBatch.jobRoleArn: arn:aws:iam::12345678910:role/my-role
 ```
 
 running the following command
 
 ```bash
-cat docker-compose.yml | compose-to-batch
+docker-compose config | compose-to-batch
 ```
 
 will output the following
@@ -51,7 +46,7 @@ will output the following
   "jobDefinitionName": "my-job",
   "type": "container",
   "containerProperties": {
-    "image": "image: 12345678910.dkr.ecr.us-east-1.amazonaws.com/my-job:0.1.0",
+    "image": "12345678910.dkr.ecr.us-east-1.amazonaws.com/my-job:0.1.0",
     "environment": [
       {
         "name": "REGION",
@@ -59,8 +54,7 @@ will output the following
       }
     ],
     "vcpus": "2",
-    "memory": "2000",
-    "jobRoleArn": "arn:aws:iam::12345678910:role/my-role"
+    "memory": "2000"
   }
 }
 ```
@@ -74,3 +68,63 @@ will output the following
 - service.labels.composeToBatch.vcpus -> containerProperties.vcpus
 - service.labels.composeToBatch.memory -> containerProperties.memory
 - service.labels.composeToBatch.jobRoleArn -> containerProperties.jobRoleArn
+
+
+### local development using IAM keys and Batch with jobRoleArn
+
+A common scenario is to do local development using IAM keys specified as environment variables in your container.  You typically don't want to check in your secrets to source control so a `.env` file is a good option here.  When you're ready to deploy to Batch, you also typically don't want to expose your secret IAM keys.  With this in mind,  `compose-to-batch` will exclude any environment variables that reference dynamic variables.  For example:
+
+```
+AWS_ACCESS_KEY_ID=xyz
+AWS_SECRET_ACCESS_KEY=xyz
+```
+
+```yaml
+version: "2"
+services:
+  my-job:
+    build: .
+    image: 12345678910.dkr.ecr.us-east-1.amazonaws.com/my-job:0.1.0
+    environment:
+      REGION: us-east-1
+      S3_BUCKET: some-bucket
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID} 
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}       
+    labels:      
+      composeToBatch.jobRoleArn: arn:aws:iam::12345678910:role/my-role
+```
+
+When you're ready to deploy to Batch, the following command will safely exclude your secret keys from the generated batch job definition and use the job role instead.
+
+```
+$ cat docker-compose.yml | compose-to-batch
+```
+
+```json
+{
+  "jobDefinitionName": "my-job",
+  "type": "container",
+  "containerProperties": {
+    "image": "12345678910.dkr.ecr.us-east-1.amazonaws.com/my-job:0.1.0",
+    "environment": [
+      {
+        "name": "REGION",
+        "value": "us-east-1"
+      },
+      {
+        "name": "S3_BUCKET",
+        "value": "some-bucket"
+      }      
+    ],
+    "vcpus": "2",
+    "memory": "2000",
+    "jobRoleArn": "arn:aws:iam::12345678910:role/my-role"
+  }
+}
+```
+
+However, if you DO want to include substituted environment variables, you can use `docker-compose config` instead since it returns the result of the variable substitution.
+
+```
+$ docker-compose.config | compose-to-batch
+```
